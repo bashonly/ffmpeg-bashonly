@@ -1,0 +1,6 @@
+/*.tar.xz
+/*.tar.gz
+/*.tar.zst
+/ffmpeg
+/pkg
+/src

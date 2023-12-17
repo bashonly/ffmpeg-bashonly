@@ -1,0 +1,19 @@
+diff --git a/libavformat/mov.c b/libavformat/mov.c
+index f7b5ec7a35251..30cf7a15b01f5 100644
+--- a/libavformat/mov.c
++++ b/libavformat/mov.c
+@@ -1222,8 +1222,12 @@ static int mov_read_ftyp(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+     int ret = ffio_read_size(pb, type, 4);
+     if (ret < 0)
+         return ret;
+-    if (c->fc->nb_streams)
+-        return AVERROR_INVALIDDATA;
++    if (c->fc->nb_streams) {
++        if (c->fc->strict_std_compliance >= FF_COMPLIANCE_STRICT)
++            return AVERROR_INVALIDDATA;
++        av_log(c->fc, AV_LOG_DEBUG, "Ignoring duplicate FTYP\n");
++        return 0;
++    }
+ 
+     if (strcmp(type, "qt  "))
+         c->isom = 1;
