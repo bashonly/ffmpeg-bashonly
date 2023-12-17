@@ -1,7 +1,7 @@
 pkgbase = ffmpeg-bashonly
 	pkgdesc = Complete solution to record, convert and stream audio and video
 	pkgver = 6.1.bash1
-	pkgrel = 2
+	pkgrel = 3
 	url = https://ffmpeg.org/
 	arch = x86_64
 	license = GPL3
@@ -10,7 +10,6 @@ pkgbase = ffmpeg-bashonly
 	makedepends = clang
 	makedepends = ffnvcodec-headers
 	makedepends = frei0r-plugins
-	makedepends = git
 	makedepends = ladspa
 	makedepends = mesa
 	makedepends = nasm

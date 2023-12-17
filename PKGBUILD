@@ -2,7 +2,7 @@
 
 pkgname=ffmpeg-bashonly
 pkgver=6.1.bash1
-pkgrel=2
+pkgrel=3
 pkgdesc='Complete solution to record, convert and stream audio and video'
 arch=(x86_64)
 url=https://ffmpeg.org/
@@ -83,7 +83,6 @@ makedepends=(
   clang
   ffnvcodec-headers
   frei0r-plugins
-  git
   ladspa
   mesa
   nasm
