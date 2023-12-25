@@ -2,7 +2,7 @@
 
 pkgname=ffmpeg-bashonly
 pkgver=6.1.bash1
-pkgrel=3
+pkgrel=4
 pkgdesc='Complete solution to record, convert and stream audio and video'
 arch=(x86_64)
 url=https://ffmpeg.org/
@@ -109,37 +109,40 @@ provides=(
   libswscale.so
 )
 conflicts=(ffmpeg)
-options=(
-  debug
+_backports=(
+  'e9c93009fc34ca9dfcf0c6f2ed90ef1df298abf7' # Fix VDPAU vo
+  'a562cfee2e214252f8b3f516527272ae32ef9532' # Fix bug in av_fft_end
+  '250471ea1745fc703eb346a2a662304536a311b1' # Fix bug in av_fft_end
+  '4cdf2c7f768015c74078544d153f243b6d9b9ac5' # Fix ftyp/invalid data received bug
 )
 source=(
-  'ffmpeg-6.1.tar.gz::https://ffmpeg.org/releases/ffmpeg-6.1.tar.gz'
-  '01-add-av_stream_get_first_dts-for-chromium.patch'
-  '02-e9c93009fc34ca9dfcf0c6f2ed90ef1df298abf7.patch'
-  '03-a562cfee2e214252f8b3f516527272ae32ef9532.patch'
-  '04-250471ea1745fc703eb346a2a662304536a311b1.patch'
-  '05-4cdf2c7f768015c74078544d153f243b6d9b9ac5.patch'
+  "https://ffmpeg.org/releases/ffmpeg-6.1.tar.gz"
+  "https://ffmpeg.org/releases/ffmpeg-6.1.tar.gz.asc"
+  "add-av_stream_get_first_dts-for-chromium.patch"
+  "ffmpeg-${_backports[0]}.patch::https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff_plain/${_backports[0]}"
+  "ffmpeg-${_backports[1]}.patch::https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff_plain/${_backports[1]}"
+  "ffmpeg-${_backports[2]}.patch::https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff_plain/${_backports[2]}"
+  "ffmpeg-${_backports[3]}.patch::https://git.ffmpeg.org/gitweb/ffmpeg.git/commitdiff_plain/${_backports[3]}"
 )
+# Import key with: curl https://ffmpeg.org/ffmpeg-devel.asc | gpg --import
+validpgpkeys=('FCF986EA15E6E293A5644F10B4322F04D67658D8')  # FFmpeg release signing key <ffmpeg-devel@ffmpeg.org>
 sha256sums=(
   '938dd778baa04d353163ca5cb06c909c918850055f549205b29b1224e45a5316'
+  'a88e632545ff91ad6b80642f9c443fd7d23f1d9413188a084fd4a06a714fc8dc'
   '57e26caced5a1382cb639235f9555fc50e45e7bf8333f7c9ae3d49b3241d3f77'
-  '305ce9c2a1d42e6a83f333aed0357cacf3bf0029b047559315e5da56903a5296'
-  '0f7403c3f57f7229f17d00ad1433e0314c55c57eecc63d4d7aec03fbdfd4c9cf'
-  '47b5d5046d345a785747d76cf6f81b2809073e287d6a40f90bcecf4671aef34d'
-  '82dc141f367888e0f12ca3c970bba9319a0599e1f767cc5a61acac753508fe19'
+  # backport commit patches
+  '082b4d383528c22ab9791e32234f80fb66d7378e02fa043f9640ee2deac28f91'
+  '490957bf0a24db91a6391b4b45b5d49fbf9af0a757b0f3b5e961401c5ce406ae'
+  '8fef9dc1f3f141ef069a3a2a0fbe87e653f844e6b99dcc1d6fdab4cf7458541f'
+  '99d3960f7bdf472f85a7508428153bc52d10f39aab3e36d782f00adf3eeeed39'
 )
 
 prepare() {
   cd ffmpeg-6.1
   # https://crbug.com/1251779
-  patch -Np1 -i ../01-add-av_stream_get_first_dts-for-chromium.patch
-  # Fix VDPAU vo
-  patch -p1 -i ../02-e9c93009fc34ca9dfcf0c6f2ed90ef1df298abf7.patch
-  # Fix bug in av_fft_end
-  patch -p1 -i ../03-a562cfee2e214252f8b3f516527272ae32ef9532.patch
-  patch -p1 -i ../04-250471ea1745fc703eb346a2a662304536a311b1.patch
-  # Fix ftyp/invalid data bug
-  patch -p1 -i ../05-4cdf2c7f768015c74078544d153f243b6d9b9ac5.patch
+  patch -Np1 -i ../add-av_stream_get_first_dts-for-chromium.patch
+  local _backport
+  for _backport in "${_backports[@]}"; do patch -p1 -i "../ffmpeg-${_backport}.patch"; done
 }
 
 build() {
